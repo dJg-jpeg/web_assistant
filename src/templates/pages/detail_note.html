@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Contact info::{{ block.super }}
+{% endblock %}
+
+{% block welcome %}
+<div class="container">
+    <div class="section_header">
+        <h2 class="section_title">All info about note "{{note.name}}" here</h2>
+    </div>
+    <div class="flex-row-container-contact">
+        <div class="flex-row-item-contact">
+            <div class="cnt_detail_info">
+                <h3 style="width: 20%;">NAME:</h3>
+                <h3 style="width: 40%;">{{ note.name }}</h3>
+                <a class="change_cnt_btn" href="{% url 'change_note_name' note.id %}">change</a>
+            </div>
+        </div>
+        <hr>
+        <div class="flex-row-item-contact">
+            <div class="cnt_detail_info">
+                <h3 style="width: 25%;">TAGS:</h3>
+                {% if tags|length < 4 %}
+                <h3 class="phone_cnt" style="width: 45%">{% for tag in tags %}<a class="phone_span" href="{% url 'delete_note_tags' note.id tag.id %}">#{{ tag.tag }}; </a> {% endfor %}</h3>
+                {% else %}
+                <h3 class="phone_cnt" style="width: 65%">{% for tag in tags %}<a class="phone_span" href="{% url 'delete_note_tags' note.id tag.id %}">#{{ tag.tag }}; </a>{% endfor %}</h3>
+                {% endif %}
+                {% if tags|length < 4 %}
+                <a class="add_phone_btn" href="{% url 'add_tag' note.id %}">add</a>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="flex-row-item-contact">
+            <div class="cnt_detail_info">
+                <h3 style="width: 20%;">Description:</h3>
+                <h3 style="width: 40%;">{{ note.description }}</h3>
+                <a class="change_cnt_btn" href="{% url 'change_note_description' note.id %}">change</a>
+            </div>
+        </div>
+        <hr>
+        <div class="flex-row-item-contact">
+            <div class="cnt_detail_info">
+                <h3 style="width: 20%;">Status:</h3>
+                <h3 style="width: 40%;">{% if note.done %} Done {% else %} Not done {% endif %}</h3>
+                <a class="change_cnt_btn" href="{% url 'change_note_status' note.id %}">change</a>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <a class="delete_contact" href="{% url 'delete_note' note.id %}">Delete note</a>
+</div>
+{% endblock %}

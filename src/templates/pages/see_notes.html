@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Add income :: {{ block.super }}
+{% endblock %}
+
+{% block welcome %}
+    <section class="section section--contacts">
+        <div class="container">
+            <div class="section_header">
+                <h3 class="section_suptitle">Notes</h3>
+                <h2 class="section_title">All your Notes are here</h2>
+                {% if notes|length > 0 %}
+                    <div class="search_contact">
+                        <form class="find_something" method="post">
+                            {% csrf_token %}
+                            <input class="inp_search" type="search" placeholder="Search" name="find_note">
+                            <button class="submit_btn" type="submit">Search</button>
+                            <a class="show_all_btn" href="/">Show all</a>
+                        </form>
+                    </div>
+                    </div>
+                    <div class="flex-row-container">
+                        {% for note in notes %}
+                            <div class="flex-row-item">
+                                <div class="services_item">
+                                    <div class="services_title">Note number: {{ note.id }}</div>
+                                    <div class="services_text">
+                                        <li>note: {{ note.note }}</li>
+                                        <li>tags: {% for tag in tags %}{% if tag.note_id_id == note.id %}{{ tag.tag }},
+                                        {% endif %}{% endfor %}</li>
+                                    </div>
+                                    <div class="change_cnt_btn">
+                                        <a class="change_btn" href="/">change</a>
+                                        <a class="show_notes"
+                                           href="{% url 'add_tag' note.contact_id_id note.id %}">add tag</a>
+                                        <a class="delete_btn"
+                                           href="{% url 'delete_note' note.contact_id_id note.id %}">delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h2 class="no_notes">NO NOTES YET</h2>
+                {% endif %}
+            <a class="add_new_btn" href="{% url 'add_note' id_contact %}">Add new note</a>
+        </div>
+    </section>
+{% endblock %}

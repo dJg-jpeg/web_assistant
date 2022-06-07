@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add income :: {{ block.super }}
+{% endblock %}
+
+{% block welcome %}
+<div class="shit">
+    <h1 class="add_income">Adding Tag</h1>
+    <form action="{% url 'add_tag' id_note %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn_add_income">Add Tag</button>
+    </form>
+</div>
+{% endblock %}
