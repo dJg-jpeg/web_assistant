@@ -1,6 +1,6 @@
 from django import forms
 from datetime import datetime
-from .models import Contact
+from .models import Contact, ContactPhone
 from django.core.validators import validate_email, ValidationError
 
 
@@ -23,6 +23,7 @@ class AddContact(forms.Form):
 
         date_delta = (datetime.now().date() - birthday).days
         all_emails = [cnt.email for cnt in Contact.objects.all()]
+        all_phones = [phn.phone for phn in ContactPhone.objects.all()]
 
         if len(name) > 40:
             self._errors['name'] = self.error_class(['Name length is maximum 40 characters'])
@@ -45,6 +46,8 @@ class AddContact(forms.Form):
         for this_phone in phones:
             if len(this_phone) > 13:
                 self._errors['phone'] = self.error_class(['Phone length is maximum 13 characters'])
+            elif this_phone in all_phones:
+                self._errors['phone'] = self.error_class(['Contact with this phone is already in the book'])
                 break
             if not this_phone[1:].isdigit() or not this_phone.startswith('+'):
                 self._errors['phone'] = self.error_class(['Phone must start with + and contain only digits'])
@@ -138,7 +141,9 @@ class AddPhone(forms.Form):
         super(AddPhone, self).clean()
 
         phone = self.cleaned_data['phone']
-
+        all_phones = [phn.phone for phn in ContactPhone.objects.all()]
+        if phone in all_phones:
+            self._errors['phone'] = self.error_class(['Contact with this phone is already in the book'])
         if len(phone) > 13:
             self._errors['phone'] = self.error_class(['Phone length is maximum 13 characters'])
         if not phone[1:].isdigit() or not phone.startswith('+'):

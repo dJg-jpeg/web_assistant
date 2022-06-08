@@ -13,7 +13,7 @@ from django.db import models
 #     token_cookie = models.CharField(254, nullable=True, default=None)
 #
 #     def __str__(self):
-#         return f"User({self.id}, {self.username}, {self.email})"
+#         return f"User({self.username}, {self.email})"
 #
 #     class Meta:
 #         verbose_name = 'User'
@@ -59,6 +59,7 @@ class Note(models.Model):
     done = models.BooleanField(default=False)
     updated_at = models.DateField(null=False, auto_now=True)
     created_at = models.DateField(null=False, auto_now_add=True)
+    # user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
@@ -81,4 +82,9 @@ class NoteTag(models.Model):
         verbose_name = 'Tag'
         verbose_name_plural = 'Tags'
         ordering = ['-updated_at']
+    
+    
+class FileManager(models.Model):
+    name = models.FileField(upload_to='media')
+    # user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     
