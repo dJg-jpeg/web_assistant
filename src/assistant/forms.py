@@ -218,3 +218,8 @@ class ChangeNoteDescription(forms.Form):
             self._errors['new_description'] = self.error_class(['Note description length is maximum 150 characters'])
 
         return self.cleaned_data
+
+
+# class UploadFile(forms.Form):
+#     file_name = forms.FileField(upload_to='media', widget=forms.FileInput(attrs={'class': 'upload_file'}))
+#     file_category = forms.ModelChoiceField(queryset=FileType.objects.all(), widget=forms.Select(attrs={'class': 'category_select'}))

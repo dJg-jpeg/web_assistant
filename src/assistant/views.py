@@ -1,7 +1,10 @@
+import os
 from datetime import datetime
 
+from django.conf import settings
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
-from .models import Contact, Note, ContactPhone, NoteTag
+from .models import Contact, Note, ContactPhone, NoteTag, FileManager
 from .forms import AddContact, AddTag, AddNote, ChangeName, ChangeBirthday, AddPhone, ChangeEmail, ChangeAddress, \
     ChangeNoteName, ChangeNoteDescription
 
@@ -285,3 +288,40 @@ def change_note_status(request, note_id):
 def delete_note_tags(request, note_id, tag_id):
     NoteTag.objects.filter(id=tag_id, note_id=note_id).delete()
     return redirect('detail_note', note_id=note_id)
+
+
+def file_manager(request):
+    files = FileManager.objects.all()
+    list_of_files = []
+    for file in files:
+        list_of_files.append(os.path.basename(file.name.name))
+    context = {
+        'files': files,
+        'files_name': list_of_files,
+    }
+
+    return render(request, template_name='pages/file_manager.html', context=context)
+
+
+def download(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="name")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+
+def upload(request):
+    if request.method == 'POST':
+        file_name = request.FILES['file']
+        document = FileManager.objects.create(name=file_name)
+        document.save()
+        return redirect('file_manager')
+    return render(request, 'pages/upload.html')
+
+
+def delete_file(request, file_id):
+    FileManager.objects.get(pk=file_id).delete()
+    return redirect('file_manager')
