@@ -13,6 +13,7 @@ class AssistantUser(AbstractBaseUser):
     token_cookie = models.CharField(max_length=254, null=True, default=None)
 
     REQUIRED_FIELDS = ['username', 'email', 'password']
+    USERNAME_FIELD = 'username'
 
     def __str__(self):
         return f"User({self.username}, {self.email})"

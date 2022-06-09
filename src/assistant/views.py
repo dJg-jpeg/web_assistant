@@ -16,10 +16,10 @@ def registration(request):
         'form': RegisterForm(),
     }
     if request.method == "POST":
-        context['form'] = RegisterForm('request.POST')
+        context['form'] = RegisterForm(request.POST)
         if context['form'].is_valid():
             context['form'].save()
-            redirect('index')
+            return redirect('index')
     return render(request, template_name='pages/registration.html', context=context)
 
 

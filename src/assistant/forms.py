@@ -8,15 +8,15 @@ from django.contrib.auth.forms import UserCreationForm
 class RegisterForm(UserCreationForm):
     class Meta:
         model = AssistantUser
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email')
 
     def save(self, commit=True):
         new_user = AssistantUser(
             username=self.cleaned_data['username'],
             email=self.cleaned_data['email'],
-            password=self.cleaned_data['password'],
+            password=self.cleaned_data['password1'],
         )
-        new_user.set_password(self.cleaned_data['password'])
+        new_user.set_password(self.cleaned_data['password1'])
         if commit:
             new_user.save()
         return new_user
@@ -25,9 +25,9 @@ class RegisterForm(UserCreationForm):
 
         super(RegisterForm, self).clean()
 
-        username = self.cleaned_data['username']
-        email = self.cleaned_data['email']
-        password = self.cleaned_data['password']
+        username = self.data['username']
+        email = self.data['email']
+        password = self.data['password1']
 
         all_emails = [usr.email for usr in AssistantUser.objects.all()]
         all_nicks = [usr.username for usr in AssistantUser.objects.all()]
@@ -36,12 +36,12 @@ class RegisterForm(UserCreationForm):
             self._errors['username'] = self.error_class(['User with this username is already having an account'])
         if len(username) > 100:
             self._errors['username'] = self.erorr_class(['Too long nickname'])
-        if len(password) > 14 or len(password) < 4:
-            self._erors['password'] = self.error_class(['Password must be between 4 and 14 characters'])
+        if len(password) < 8:
+            self._errors['password'] = self.error_class(['Password must be longer than 8 characters'])
         if email in all_emails:
             self._errors['email'] = self.error_class(['User with this email is already having an account'])
         if len(email) > 100:
-            self._erors['email'] = self.error_class(['Too long email'])
+            self._errors['email'] = self.error_class(['Too long email'])
         try:
             validate_email(email)
         except ValidationError:
