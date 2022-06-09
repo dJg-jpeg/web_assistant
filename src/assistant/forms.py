@@ -1,7 +1,53 @@
 from django import forms
 from datetime import datetime
-from .models import Contact
+from .models import Contact, AssistantUser
 from django.core.validators import validate_email, ValidationError
+from django.contrib.auth.forms import UserCreationForm
+
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = AssistantUser
+        fields = ('username', 'email', 'password')
+
+    def save(self, commit=True):
+        new_user = AssistantUser(
+            username=self.cleaned_data['username'],
+            email=self.cleaned_data['email'],
+            password=self.cleaned_data['password'],
+        )
+        new_user.set_password(self.cleaned_data['password'])
+        if commit:
+            new_user.save()
+        return new_user
+
+    def clean(self):
+
+        super(RegisterForm, self).clean()
+
+        username = self.cleaned_data['username']
+        email = self.cleaned_data['email']
+        password = self.cleaned_data['password']
+
+        all_emails = [usr.email for usr in AssistantUser.objects.all()]
+        all_nicks = [usr.username for usr in AssistantUser.objects.all()]
+
+        if username in all_nicks:
+            self._errors['username'] = self.error_class(['User with this username is already having an account'])
+        if len(username) > 100:
+            self._errors['username'] = self.erorr_class(['Too long nickname'])
+        if len(password) > 14 or len(password) < 4:
+            self._erors['password'] = self.error_class(['Password must be between 4 and 14 characters'])
+        if email in all_emails:
+            self._errors['email'] = self.error_class(['User with this email is already having an account'])
+        if len(email) > 100:
+            self._erors['email'] = self.error_class(['Too long email'])
+        try:
+            validate_email(email)
+        except ValidationError:
+            self._errors['email'] = self.error_class(['Invalid email'])
+
+        return self.cleaned_data
 
 
 class AddContact(forms.Form):

@@ -3,12 +3,24 @@ from datetime import datetime
 from django.shortcuts import render, redirect
 from .models import Contact, Note, ContactPhone, NoteTag
 from .forms import AddContact, AddTag, AddNote, ChangeName, ChangeBirthday, AddPhone, ChangeEmail, ChangeAddress, \
-    ChangeNoteName, ChangeNoteDescription
+    ChangeNoteName, ChangeNoteDescription, RegisterForm
 
 
 # Create your views here.
 def index(request):
     return render(request, template_name='pages/index.html', context={'title': 'Web assistant'})
+
+
+def registration(request):
+    context = {
+        'form': RegisterForm(),
+    }
+    if request.method == "POST":
+        context['form'] = RegisterForm('request.POST')
+        if context['form'].is_valid():
+            context['form'].save()
+            redirect('index')
+    return render(request, template_name='pages/registration.html', context=context)
 
 
 def contacts(request):

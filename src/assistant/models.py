@@ -1,24 +1,26 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
 
 
 # Create your models here.
 
-# class User(models.Model):
-#     username = models.CharField(100, unique=True, nullable=False)
-#     email = models.EmailField(100, unique=True, nullable=False)
-#     created_at = models.DateField(null=False, auto_now_add=True)
-#     hash = models.CharField(255, nullable=False)
-#     storage_size = models.IntegerField(default=0)
-#     storage_limit = models.IntegerField(default=1e+7)
-#     token_cookie = models.CharField(254, nullable=True, default=None)
-#
-#     def __str__(self):
-#         return f"User({self.id}, {self.username}, {self.email})"
-#
-#     class Meta:
-#         verbose_name = 'User'
-#         verbose_name_plural = 'Users'
-#         ordering = ['-created_at']
+class AssistantUser(AbstractBaseUser):
+    username = models.CharField(max_length=100, unique=True, null=False)
+    email = models.EmailField(max_length=100, unique=True, null=False)
+    created_at = models.DateField(null=False, auto_now_add=True)
+    storage_size = models.IntegerField(default=0)
+    storage_limit = models.IntegerField(default=1e+7)
+    token_cookie = models.CharField(max_length=254, null=True, default=None)
+
+    REQUIRED_FIELDS = ['username', 'email', 'password']
+
+    def __str__(self):
+        return f"User({self.username}, {self.email})"
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+        ordering = ['-created_at']
 
 
 class Contact(models.Model):
@@ -59,6 +61,7 @@ class Note(models.Model):
     done = models.BooleanField(default=False)
     updated_at = models.DateField(null=False, auto_now=True)
     created_at = models.DateField(null=False, auto_now_add=True)
+    # user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
