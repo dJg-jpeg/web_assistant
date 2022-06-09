@@ -86,18 +86,21 @@ class NoteTag(models.Model):
         ordering = ['-updated_at']
     
     
-# class FileType(models.Model):
-#     file_type = models.CharField(max_length=20)
+class FileType(models.Model):
+    file_type = models.CharField(max_length=20)
+    
+    def __str__(self):
+        return self.file_type
 
 
 class FileManager(models.Model):
-    name = models.FileField(upload_to='media')
-    # category_id = models.ForeignKey(FileType, on_delete=models.DO_NOTHING)
-    # uploaded_at = models.DateField(null=False, auto_now_add=True)
+    file_name = models.FileField(upload_to='media')
+    category_id = models.ForeignKey(FileType, on_delete=models.DO_NOTHING)
+    uploaded_at = models.DateField(null=False, auto_now_add=True)
     # user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def delete(self, *args, **kwargs):
-        self.name.delete()
+        self.file_name.delete()
         super().delete(*args, **kwargs)
 
     

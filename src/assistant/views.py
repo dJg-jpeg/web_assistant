@@ -4,9 +4,9 @@ from datetime import datetime
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
-from .models import Contact, Note, ContactPhone, NoteTag, FileManager
+from .models import Contact, Note, ContactPhone, NoteTag, FileManager, FileType
 from .forms import AddContact, AddTag, AddNote, ChangeName, ChangeBirthday, AddPhone, ChangeEmail, ChangeAddress, \
-    ChangeNoteName, ChangeNoteDescription
+    ChangeNoteName, ChangeNoteDescription, UploadFile
 
 
 # Create your views here.
@@ -292,12 +292,10 @@ def delete_note_tags(request, note_id, tag_id):
 
 def file_manager(request):
     files = FileManager.objects.all()
-    list_of_files = []
-    for file in files:
-        list_of_files.append(os.path.basename(file.name.name))
+    categories = FileType.objects.all()
     context = {
         'files': files,
-        'files_name': list_of_files,
+        'categories': categories,
     }
 
     return render(request, template_name='pages/file_manager.html', context=context)
@@ -314,14 +312,29 @@ def download(request, path):
 
 
 def upload(request):
+    context = {
+        'form': UploadFile(),
+    }
     if request.method == 'POST':
-        file_name = request.FILES['file']
-        document = FileManager.objects.create(name=file_name)
+        file_name = request.FILES['file_name']
+        file_category = request.POST['file_category']
+        s = FileType.objects.get(pk=int(file_category))
+        document = FileManager.objects.create(file_name=file_name, category_id_id=s.id)
         document.save()
         return redirect('file_manager')
-    return render(request, 'pages/upload.html')
+    return render(request, 'pages/upload.html', context)
 
 
 def delete_file(request, file_id):
     FileManager.objects.get(pk=file_id).delete()
     return redirect('file_manager')
+
+
+def show_by_category(request, category_id):
+    files = FileManager.objects.filter(category_id_id=category_id)
+    categories = FileType.objects.all()
+    context = {
+        'files': files,
+        'categories': categories,
+    }
+    return render(request, 'pages/file_manager.html', context)

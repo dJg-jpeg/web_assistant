@@ -1,6 +1,6 @@
 from django import forms
 from datetime import datetime
-from .models import Contact, ContactPhone
+from .models import Contact, ContactPhone, FileType
 from django.core.validators import validate_email, ValidationError
 
 
@@ -220,6 +220,6 @@ class ChangeNoteDescription(forms.Form):
         return self.cleaned_data
 
 
-# class UploadFile(forms.Form):
-#     file_name = forms.FileField(upload_to='media', widget=forms.FileInput(attrs={'class': 'upload_file'}))
-#     file_category = forms.ModelChoiceField(queryset=FileType.objects.all(), widget=forms.Select(attrs={'class': 'category_select'}))
+class UploadFile(forms.Form):
+    file_category = forms.ModelChoiceField(queryset=FileType.objects.all(), widget=forms.Select(attrs={'class': 'category_select'}))
+    file_name = forms.FileField(widget=forms.FileInput(attrs={'class': 'upload_file'}))
