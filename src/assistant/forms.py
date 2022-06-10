@@ -8,15 +8,11 @@ from django.contrib.auth.forms import UserCreationForm
 class RegisterForm(UserCreationForm):
     class Meta:
         model = AssistantUser
-        fields = ('username', 'email')
+        fields = ('username', 'email', 'password1', 'password2')
 
     def save(self, commit=True):
-        new_user = AssistantUser(
-            username=self.cleaned_data['username'],
-            email=self.cleaned_data['email'],
-            password=self.cleaned_data['password1'],
-        )
-        new_user.set_password(self.cleaned_data['password1'])
+        new_user = super(RegisterForm, self).save(commit=False)
+        new_user.email = self.cleaned_data['email']
         if commit:
             new_user.save()
         return new_user
@@ -48,6 +44,11 @@ class RegisterForm(UserCreationForm):
             self._errors['email'] = self.error_class(['Invalid email'])
 
         return self.cleaned_data
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100, widget=forms.TextInput)
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput)
 
 
 class AddContact(forms.Form):

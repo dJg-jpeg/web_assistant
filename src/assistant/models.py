@@ -10,7 +10,6 @@ class AssistantUser(AbstractBaseUser):
     created_at = models.DateField(null=False, auto_now_add=True)
     storage_size = models.IntegerField(default=0)
     storage_limit = models.IntegerField(default=1e+7)
-    token_cookie = models.CharField(max_length=254, null=True, default=None)
 
     REQUIRED_FIELDS = ['username', 'email', 'password']
     USERNAME_FIELD = 'username'

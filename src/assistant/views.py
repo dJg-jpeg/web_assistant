@@ -1,9 +1,12 @@
 from datetime import datetime
 
+from django.contrib.auth.hashers import check_password
+from django.contrib.messages import info
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
-from .models import Contact, Note, ContactPhone, NoteTag
+from .models import Contact, Note, ContactPhone, NoteTag, AssistantUser
 from .forms import AddContact, AddTag, AddNote, ChangeName, ChangeBirthday, AddPhone, ChangeEmail, ChangeAddress, \
-    ChangeNoteName, ChangeNoteDescription, RegisterForm
+    ChangeNoteName, ChangeNoteDescription, RegisterForm, LoginForm
 
 
 # Create your views here.
@@ -19,8 +22,30 @@ def registration(request):
         context['form'] = RegisterForm(request.POST)
         if context['form'].is_valid():
             context['form'].save()
-            return redirect('index')
+            return redirect('login')
     return render(request, template_name='pages/registration.html', context=context)
+
+
+def login_user(request):
+    context = {
+        'form': LoginForm(),
+    }
+    if request.method == "POST":
+        context['form'] = LoginForm(request.POST)
+        if context['form'].is_valid():
+            username = context['form'].cleaned_data['username']
+            password = context['form'].cleaned_data['password']
+            user = AssistantUser.objects.get(username=username)
+            if user and check_password(password, user.password):
+                login(request, user)
+                return redirect('index')
+        info(request, 'Username or password is incorrect')
+    return render(request, template_name='pages/login.html', context=context)
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('index')
 
 
 def contacts(request):
