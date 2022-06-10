@@ -1,12 +1,15 @@
+import os
 from datetime import datetime
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.messages import info
 from django.contrib.auth import login, logout
+from django.conf import settings
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
-from .models import Contact, Note, ContactPhone, NoteTag, AssistantUser
+from .models import Contact, Note, ContactPhone, NoteTag, FileManager, FileType, AssistantUser
 from .forms import AddContact, AddTag, AddNote, ChangeName, ChangeBirthday, AddPhone, ChangeEmail, ChangeAddress, \
-    ChangeNoteName, ChangeNoteDescription, RegisterForm, LoginForm
+    ChangeNoteName, ChangeNoteDescription, RegisterForm, LoginForm, UploadFile
 
 
 # Create your views here.
@@ -322,3 +325,66 @@ def change_note_status(request, note_id):
 def delete_note_tags(request, note_id, tag_id):
     NoteTag.objects.filter(id=tag_id, note_id=note_id).delete()
     return redirect('detail_note', note_id=note_id)
+
+
+def file_manager(request):
+    files = FileManager.objects.all()
+    categories = FileType.objects.all()
+    context = {
+        'files': files,
+        'categories': categories,
+    }
+
+    return render(request, template_name='pages/file_manager.html', context=context)
+
+
+def download(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="name")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
+
+
+def upload(request):
+    context = {
+        'form': UploadFile(),
+    }
+    files_type = {
+        'Video': ['avi', 'mp4', 'mov', 'mkv'],
+        'Audio': ['mp3', 'ogg', 'wav', 'amr'],
+        'Images': ['jpeg', 'png', 'jpg', 'svg'],
+        'Archives': ['zip', 'gz', 'tar'],
+        'Documents': ['doc', 'docx', 'txt', 'pdf', 'xlsx', 'pptx'],
+    }
+    if request.method == 'POST':
+        file = request.FILES['file']
+        file_type = str(file).split('.')[-1]
+        for item in files_type.items():
+            if file_type in item[1]:
+                get_file = FileType.objects.filter(file_type=item[0])
+                document = FileManager.objects.create(file_name=file, category_id_id=get_file[0].id)
+                document.save()
+                return redirect('file_manager')
+        get_file = FileType.objects.filter(file_type='Other')
+        document = FileManager.objects.create(file_name=file, category_id_id=get_file[0].id)
+        document.save()
+        return redirect('file_manager')
+    return render(request, 'pages/upload.html', context)
+
+
+def delete_file(request, file_id):
+    FileManager.objects.get(pk=file_id).delete()
+    return redirect('file_manager')
+
+
+def show_by_category(request, category_id):
+    files = FileManager.objects.filter(category_id_id=category_id)
+    categories = FileType.objects.all()
+    context = {
+        'files': files,
+        'categories': categories,
+    }
+    return render(request, 'pages/file_manager.html', context)
