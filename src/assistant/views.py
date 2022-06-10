@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from pathlib import Path
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.messages import info
@@ -352,24 +353,24 @@ def upload(request):
     context = {
         'form': UploadFile(),
     }
-    files_type = {
-        'Video': ['avi', 'mp4', 'mov', 'mkv'],
-        'Audio': ['mp3', 'ogg', 'wav', 'amr'],
-        'Images': ['jpeg', 'png', 'jpg', 'svg'],
-        'Archives': ['zip', 'gz', 'tar'],
-        'Documents': ['doc', 'docx', 'txt', 'pdf', 'xlsx', 'pptx'],
+    files_types = {
+        'Video': ('.avi', '.mp4', '.mov', '.mkv'),
+        'Audio': ('.mp3', '.ogg', '.wav', '.amr'),
+        'Images': ('.jpeg', '.png', '.jpg', '.svg'),
+        'Archives': ('.zip', '.gz', '.tar'),
+        'Documents': ('.doc', '.docx', '.txt', '.pdf', '.xlsx', '.pptx'),
     }
     if request.method == 'POST':
         file = request.FILES['file']
-        file_type = str(file).split('.')[-1]
-        for item in files_type.items():
-            if file_type in item[1]:
-                get_file = FileType.objects.filter(file_type=item[0])
-                document = FileManager.objects.create(file_name=file, category_id_id=get_file[0].id)
+        file_type = Path(str(file)).suffix.lower()
+        for category, extensions in files_types.items():
+            if file_type in extensions:
+                file_category_id = FileType.objects.get(file_type=category).id
+                document = FileManager.objects.create(file_name=file, category_id_id=file_category_id)
                 document.save()
                 return redirect('file_manager')
-        get_file = FileType.objects.filter(file_type='Other')
-        document = FileManager.objects.create(file_name=file, category_id_id=get_file[0].id)
+        other_ctg_id = FileType.objects.get(file_type='Other').id
+        document = FileManager.objects.create(file_name=file, category_id_id=other_ctg_id)
         document.save()
         return redirect('file_manager')
     return render(request, 'pages/upload.html', context)
