@@ -315,11 +315,24 @@ def upload(request):
     context = {
         'form': UploadFile(),
     }
+    files_type = {
+        'Video': ['avi', 'mp4', 'mov', 'mkv'],
+        'Audio': ['mp3', 'ogg', 'wav', 'amr'],
+        'Images': ['jpeg', 'png', 'jpg', 'svg'],
+        'Archives': ['zip', 'gz', 'tar'],
+        'Documents': ['doc', 'docx', 'txt', 'pdf', 'xlsx', 'pptx'],
+    }
     if request.method == 'POST':
-        file_name = request.FILES['file_name']
-        file_category = request.POST['file_category']
-        s = FileType.objects.get(pk=int(file_category))
-        document = FileManager.objects.create(file_name=file_name, category_id_id=s.id)
+        file = request.FILES['file']
+        file_type = str(file).split('.')[-1]
+        for item in files_type.items():
+            if file_type in item[1]:
+                get_file = FileType.objects.filter(file_type=item[0])
+                document = FileManager.objects.create(file_name=file, category_id_id=get_file[0].id)
+                document.save()
+                return redirect('file_manager')
+        get_file = FileType.objects.filter(file_type='Other')
+        document = FileManager.objects.create(file_name=file, category_id_id=get_file[0].id)
         document.save()
         return redirect('file_manager')
     return render(request, 'pages/upload.html', context)

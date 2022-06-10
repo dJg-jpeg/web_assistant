@@ -221,5 +221,4 @@ class ChangeNoteDescription(forms.Form):
 
 
 class UploadFile(forms.Form):
-    file_category = forms.ModelChoiceField(queryset=FileType.objects.all(), widget=forms.Select(attrs={'class': 'category_select'}))
-    file_name = forms.FileField(widget=forms.FileInput(attrs={'class': 'upload_file'}))
+    file = forms.FileField(widget=forms.FileInput(attrs={'class': 'upload_file'}))
