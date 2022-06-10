@@ -4,8 +4,8 @@
 File manager :: {{ block.super }}
 {% endblock %}
 
-{% block welcome %}
-<h1 class="add_income">File Manager</h1>
+{% block content %}
+<h1 class="file_manager_title">File Manager</h1>
 <div style="margin-top: 150px">
     <div class="file_manager_btns">
         <a class="add_file" href="{% url 'upload' %}">Upload file</a>
@@ -16,7 +16,7 @@ File manager :: {{ block.super }}
             <div class="col-md-3">
                 <div class="list-group">
                     {% for item in categories %}
-                    <a href="{% url 'show_by_category' item.id %}" class="list-group-item list-group-item-action">{{ item.file_type }}</a>
+                    <a href="{% url 'show_by_category' item.id %}" class="list-group-item list-group-item-action nav_bar">{{ item.file_type }}</a>
                     {% endfor %}
                 </div>
             </div>

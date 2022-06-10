@@ -4,9 +4,9 @@
 Upload file :: {{ block.super }}
 {% endblock %}
 
-{% block welcome %}
-<div class="shit">
-   <h1 class="add_income">Upload file</h1>
+{% block content %}
+<h1 class="form_title">Upload file</h1>
+<div class="form_content">
     <form style="margin-top: 45px" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy }}

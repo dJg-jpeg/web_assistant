@@ -9,12 +9,12 @@
             href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:wght@400;700&family=Roboto&display=swap"
             rel="stylesheet"
     />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/new_style.css' %}">
     <title>{% block title %}Web Assistant{% endblock %}</title>
 </head>
 <body>
 
 {% include 'inc/_nav.html' %}
-{% block welcome %}{% endblock %}
+{% block content %}{% endblock %}
 </body>
 </html>

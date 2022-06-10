@@ -4,7 +4,7 @@
 Contact info::{{ block.super }}
 {% endblock %}
 
-{% block welcome %}
+{% block content %}
 <div class="container">
     <div class="section_header">
         <h3 class="section_suptitle">{{contact.name}}</h3>
@@ -23,9 +23,9 @@ Contact info::{{ block.super }}
             <div class="cnt_detail_info">
                 <h3 style="width: 25%;">PHONES:</h3>
                 {% if phones|length < 4 %}
-                <h3 class="phone_cnt" style="width: 45%">{% for phone in phones %}<a class="phone_span" href='{% url "delete_phone" id_contact phone.phone %}'>{{ phone.phone }}</a> {% endfor %}</h3>
+                <h3 class="phone_cnt" style="width: 45%">{% for phone in phones %}<a class="phone_del_link" href='{% url "delete_phone" id_contact phone.phone %}'>{{ phone.phone }}</a> {% endfor %}</h3>
                 {% else %}
-                <h3 class="phone_cnt" style="width: 65%">{% for phone in phones %}<a class="phone_span" href='{% url "delete_phone" id_contact phone.phone %}'>{{ phone.phone }} </a>{% endfor %}</h3>
+                <h3 class="phone_cnt" style="width: 65%">{% for phone in phones %}<a class="phone_del_link" href='{% url "delete_phone" id_contact phone.phone %}'>{{ phone.phone }} </a>{% endfor %}</h3>
                 {% endif %}
                 {% if phones|length < 4 %}
                 <a class="add_phone_btn" href="{% url 'add_phone' id_contact %}">add</a>

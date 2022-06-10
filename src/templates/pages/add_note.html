@@ -4,13 +4,13 @@
 Add income :: {{ block.super }}
 {% endblock %}
 
-{% block welcome %}
-<div class="shit">
-    <h1 class="add_income">Adding note</h1>
+{% block content %}
+<h1 class="form_title">Adding note</h1>
+<div class="form_content">
     <form style="width: 45%" action="{% url 'add_note'%}" method="post">
         {% csrf_token %}
         {{ form|crispy }}
-        <button type="submit" class="btn_add_income">Add Note</button>
+        <button type="submit" class="submit_form_btn">Add Note</button>
     </form>
 </div>
 {% endblock %}
