@@ -61,11 +61,11 @@ def add_contact(request):
             email = form.cleaned_data['email']
             address = form.cleaned_data['address']
             phones = form.cleaned_data['phone']
-            contact = Contact(user_id_id=logged_user_id, name=name, birthday=birthday, email=email, address=address)
+            contact = Contact(user_id=logged_user_id, name=name, birthday=birthday, email=email, address=address)
             contact.save()
             list_of_phones = phones.split(',')
             for phone in list_of_phones:
-                added_phone = ContactPhone(contact_id=contact, phone=phone.strip())
+                added_phone = ContactPhone(contact_id=contact.id, phone=phone.strip())
                 added_phone.save()
             return redirect('contact_book')
     return render(request, 'pages/add_contact.html', {'form': form})
@@ -73,16 +73,16 @@ def add_contact(request):
 
 @login_required
 def delete_contact(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id == request.user.id:
+    if Contact.objects.get(id=contact_id).user_id == request.user.id:
         Contact.objects.filter(id=contact_id).delete()
     return redirect('contact_book')
 
 
 @login_required
 def detail_contact(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
-    phones = ContactPhone.objects.filter(contact_id_id=contact_id)
+    phones = ContactPhone.objects.filter(contact_id=contact_id)
     contact = Contact.objects.get(pk=contact_id)
     context = {
         'id_contact': contact_id,
@@ -94,7 +94,7 @@ def detail_contact(request, contact_id):
 
 @login_required
 def add_phone(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
     context = {
         'form': AddPhone(),
@@ -104,7 +104,7 @@ def add_phone(request, contact_id):
         context['form'] = AddPhone(request.POST)
         if context['form'].is_valid():
             phone = request.POST['phone']
-            phone_to_add = ContactPhone(contact_id_id=contact_id, phone=phone.strip())
+            phone_to_add = ContactPhone(contact_id=contact_id, phone=phone.strip())
             phone_to_add.save()
             return redirect('detail_contact', contact_id=contact_id)
     return render(request, 'pages/add_phone.html', context)
@@ -112,7 +112,7 @@ def add_phone(request, contact_id):
 
 @login_required
 def change_name(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
     context = {
         'form': ChangeName(),
@@ -131,7 +131,7 @@ def change_name(request, contact_id):
 
 @login_required
 def change_email(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
     context = {
         'form': ChangeEmail(),
@@ -150,7 +150,7 @@ def change_email(request, contact_id):
 
 @login_required
 def change_birthday(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
     context = {
         'form': ChangeBirthday(),
@@ -169,7 +169,7 @@ def change_birthday(request, contact_id):
 
 @login_required
 def change_address(request, contact_id):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
     context = {
         'form': ChangeAddress(),
@@ -186,7 +186,7 @@ def change_address(request, contact_id):
 
 @login_required
 def delete_phone(request, contact_id, phone_value):
-    if Contact.objects.get(id=contact_id).user_id_id != request.user.id:
+    if Contact.objects.get(id=contact_id).user_id != request.user.id:
         return redirect('contact_book')
     ContactPhone.objects.filter(phone=phone_value, contact_id=contact_id).delete()
     return redirect('detail_contact', contact_id=contact_id)

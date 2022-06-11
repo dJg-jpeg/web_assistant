@@ -58,17 +58,17 @@ def upload(request):
             if file_type in extensions:
                 file_category_id = FileType.objects.get(file_type=category).id
                 document = FileManager.objects.create(
-                    user_id_id=logged_user_id,
+                    user_id=logged_user_id,
                     file_name=file,
-                    category_id_id=file_category_id,
+                    file_type_id=file_category_id,
                 )
                 document.save()
                 return redirect('file_manager')
         other_ctg_id = FileType.objects.get(file_type='Other').id
         document = FileManager.objects.create(
-            user_id_id=logged_user_id,
+            user_id=logged_user_id,
             file_name=file,
-            category_id_id=other_ctg_id
+            file_type_id=other_ctg_id
         )
         document.save()
         return redirect('file_manager')
@@ -77,7 +77,7 @@ def upload(request):
 
 @login_required
 def delete_file(request, file_id):
-    if FileManager.objects.get(id=file_id).user_id_id == request.user.id:
+    if FileManager.objects.get(id=file_id).user_id == request.user.id:
         FileManager.objects.get(pk=file_id).delete()
     return redirect('file_manager')
 
@@ -85,7 +85,7 @@ def delete_file(request, file_id):
 @login_required
 def show_by_category(request, category_id):
     logged_user_id = request.user.id
-    files = FileManager.objects.filter(user_id=logged_user_id, category_id_id=category_id)
+    files = FileManager.objects.filter(user_id=logged_user_id, file_type_id=category_id)
     categories = FileType.objects.all()
     context = {
         'files': files,
