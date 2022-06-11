@@ -637,6 +637,16 @@ h6 {
 
 /*Index*/
 
+.no_content_index{
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 1;
+    font-family: "Kaushan Script", cursive;
+}
 .container {
     width: 100%;
     max-width: 1200px;
@@ -717,6 +727,22 @@ h6 {
 }
 
 /*Nav*/
+
+.username_name{
+    position: relative;
+    color: white !important;
+    font-family: "Kaushan Script", cursive;
+    text-decoration: none;
+}
+
+.username_name:before {
+    content: url(../images/user.ico);
+    right: -44px;
+    top: -120px;
+    position: absolute;
+    display: block;
+    transform: scale(0.090);
+}
 
 .header {
     width: 100%;
@@ -1030,5 +1056,67 @@ h6 {
 
 .note_desc{
     height:150px;
+}
+
+/*Registration*/
+.reg_title{
+    margin-top: 5%;
+    margin-bottom: 2%;
+}
+
+.text-muted{
+    color: white !important;
+}
+
+.reg_btn {
+    margin-top: 20px;
+    margin-bottom: 80px;
+    border: 1px solid black;
+    width: 35%;
+    margin-left: 32%;
+    transition-duration: 0.4s;
+    background-color: white;
+    font-family: "Roboto", sans-serif;
+    border-radius: 8px;
+    color: black;
+    text-align: center;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.reg_btn:hover {
+    background-color: grey;
+    color: black;
+    text-decoration: none;
+}
+
+
+/*Login*/
+
+.login_btn{
+    margin-top: 20px;
+    margin-bottom: 80px;
+    border: 1px solid black;
+    width: 35%;
+    margin-left: 32%;
+    transition-duration: 0.4s;
+    background-color: white;
+    font-family: "Roboto", sans-serif;
+    border-radius: 8px;
+    color: black;
+    text-align: center;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.login_btn:hover {
+    background-color: grey;
+    color: black;
+    text-decoration: none;
+}
+
+.login_title{
+    margin-top: 5%;
+    margin-bottom: 2%;
 }
 
