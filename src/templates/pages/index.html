@@ -10,11 +10,15 @@
                 <h1 class="intro_title">Welcome</h1>
             </div>
         </div>
+        {% if user.is_authenticated %}
         <div class="buttons">
             <a class="index_btn" href="{% url 'contact_book' %}">Contact Book</a>
             <a class="index_btn" href="{% url 'note_book' %}">Note Book</a>
             <a class="index_btn" href="{% url 'file_manager' %}">Manage Files</a>
             <a class="index_btn" href="/">News</a>
         </div>
+        {% else %}
+        <h1 style="color: white;">Login to see all features</h1>
+        {% endif %}
     </div>
 {% endblock %}

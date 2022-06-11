@@ -4,8 +4,8 @@
 Add income :: {{ block.super }}
 {% endblock %}
 
-{% block welcome %}
-<div class="shit">
+{% block content %}
+<div class="form_content">
     <h1 style="margin-top: 120px">Login</h1>
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
