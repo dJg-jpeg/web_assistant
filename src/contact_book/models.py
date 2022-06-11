@@ -1,7 +1,9 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Create your models here.
+
+
 class Contact(models.Model):
     name = models.CharField(max_length=40, null=False)
     birthday = models.DateField(null=False)
@@ -9,8 +11,7 @@ class Contact(models.Model):
     address = models.CharField(max_length=50)
     updated_at = models.DateField(null=False, auto_now=True)
     created_at = models.DateField(null=False, auto_now_add=True)
-    
-    # user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
