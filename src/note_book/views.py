@@ -58,7 +58,7 @@ def add_tag(request, note_id):
         context['form'] = AddTag(request.POST)
         if context['form'].is_valid():
             new_tag_value = context['form'].cleaned_data['tag']
-            new_tag = NoteTag(tag=new_tag_value, note_id=Note.objects.filter(id=note_id)[0])
+            new_tag = NoteTag(tag=new_tag_value, note_id=Note.objects.filter(id=note_id)[0].id)
             new_tag.save()
             return redirect('detail_note', note_id=note_id)
     return render(request, 'pages/add_tag.html', context)
