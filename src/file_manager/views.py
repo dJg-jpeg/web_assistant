@@ -16,12 +16,23 @@ def index(request):
 
 @login_required
 def file_manager(request):
+    if len(FileType.objects.all()) == 0:
+        FileType.create("Video").save()
+        FileType.create("Audio").save()
+        FileType.create("Images").save()
+        FileType.create("Archives").save()
+        FileType.create("Documents").save()
+        FileType.create("Other").save()
     logged_user_id = request.user.id
     files = FileManager.objects.filter(user_id=logged_user_id)
     categories = FileType.objects.all()
+    list_of_names = []
+    for item in files:
+        list_of_names.append(str(item.file_name).split("/")[1])
     context = {
         'files': files,
         'categories': categories,
+        'file_name': list_of_names,
     }
 
     return render(request, template_name='pages/file_manager.html', context=context)

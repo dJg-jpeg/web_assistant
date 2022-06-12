@@ -27,8 +27,8 @@ File manager :: {{ block.super }}
                     <div class="card-header">
                         <div class="file_manager_content">
                             <h5 style="width: 3%">{{ forloop.counter }}. </h5>
-                            <h5 style="width: 67%">File: {{ item.file_name.name|slice:"6:" }}</h5>
-                            <a style="width: 15%" href="{{item.file_name.url}}" download="{{file_name}}"> Download</a>
+                            <h5 style="width: 67%">File: {{ item.filename }}</h5>
+                            <a style="width: 15%" href="{{item.file_name.url}}" download="{{filename}}"> Download</a>
                             <a style="width: 15%" href="{% url 'delete_file' item.id %}">Delete file</a>
                         </div>
                     </div>
