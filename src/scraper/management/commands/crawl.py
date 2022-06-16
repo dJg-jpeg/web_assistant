@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
-from src.scraper.scraper.spiders.dw import DwSpider
+from scraper.scraper.spiders.dw import DwSpider
 from scrapy.crawler import CrawlerProcess
 # from scrapy.utils.project import get_project_settings
 
 from scrapy.settings import Settings
-from src.scraper.scraper import settings as my_settings
+from scraper.scraper import settings as my_settings
 
 
 class Command(BaseCommand):

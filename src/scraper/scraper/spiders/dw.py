@@ -1,5 +1,5 @@
 import scrapy
-from src.scraper.scraper.items import NewsListItem
+from scraper.scraper.items import NewsListItem
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, Join
 from scrapy.spiders import Rule
