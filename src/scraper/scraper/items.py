@@ -12,7 +12,7 @@
 #     pass
 
 from scrapy_djangoitem import DjangoItem
-from news.models import NewsList
+from src.news.models import NewsList
 
 
 class NewsListItem(DjangoItem):

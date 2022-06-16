@@ -5,9 +5,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import NewsList
 
+
 # Create your views here.
 def index(request):
     return render(request, template_name='pages/index.html', context={'title': 'Web assistant'})
+
 
 @login_required
 def news(request):
