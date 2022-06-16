@@ -15,7 +15,7 @@
             <a class="index_btn" href="{% url 'contact_book' %}">Contact Book</a>
             <a class="index_btn" href="{% url 'note_book' %}">Note Book</a>
             <a class="index_btn" href="{% url 'file_manager' %}">Manage Files</a>
-            <a class="index_btn" href="/">News</a>
+            <a class="index_btn" href="{% url 'news' %}">News</a>
         </div>
         {% else %}
         <h1 class="no_content_index">Login to see all features</h1>
