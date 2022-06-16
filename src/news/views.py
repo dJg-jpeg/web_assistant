@@ -13,6 +13,13 @@ def index(request):
 
 @login_required
 def news(request):
+    unparsed_news = NewsList.objects.all()
+    unique_news = []
+    for item in unparsed_news:
+        if item.title in unique_news:
+            item.delete()
+        else:
+            unique_news.append(item.title)
     NL = NewsList.objects.all()
     context = {'NL': NL}
     return render(request, template_name='pages/news.html', context=context)
