@@ -13,11 +13,11 @@
                 <h5 style="width: 1%">{{ forloop.counter }}.</h5>
                 <h5 style="width: 10%">Time:<br>{{news.date_of_news}}</h5>
                 <h5 style="width: 65%">Title:<br> {{ news.title }}</h5>
-                <a class="show_detail_info" href="https://www.dw.com{{news.link}}" target="_blank">Link</a>
+                <a class="show_detail_info" href="{{news.link}}" target="_blank">Link</a>
             </div>
         </div>
        {% endfor %}
   </div>
 </div>
-
+<!--https://www.dw.com-->
 {% endblock %}

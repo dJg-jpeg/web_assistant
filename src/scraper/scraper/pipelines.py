@@ -15,10 +15,15 @@ class ScraperPipeline(object):
 
 
 class ScraperNPipeline(object):
-    """
-    Removes signs from the price value. i.e replaces 10000/= with 10000
-    """
+
     def process_item(self, item, spider):
         if item.get('title'):
             item['title'] = item['title'].replace('\n', '')
+            return item
+
+class ScraperLPipeline(object):
+
+    def process_item(self, item, spider):
+        if item.get('link'):
+            item['link'] = 'https://www.dw.com'+item['link']
             return item
