@@ -11,7 +11,9 @@ def index(request):
 
 @login_required
 def notes(request):
-    all_notes = Note.objects.all()
+    logged_user_id = request.user.id
+    all_notes = Note.objects.filter(user_id=logged_user_id)
+    all_user_notes_ids = [nt.id for nt in all_notes]
     note_tags = NoteTag.objects.all()
     context = {
         'notes': all_notes,
@@ -20,15 +22,15 @@ def notes(request):
     if request.method == 'POST':
         if 'find_note' in request.POST:
             name = request.POST['find_note']
-            context.update({'notes': Note.objects.filter(name__icontains=name)})
+            context.update({'notes': Note.objects.filter(user_id=logged_user_id, name__icontains=name)})
         elif 'find_by_tag' in request.POST:
             notes_with_tags = request.POST['find_by_tag']
-            tags = NoteTag.objects.filter(tag__icontains=notes_with_tags)
+            tags = NoteTag.objects.filter(note_id__in=all_user_notes_ids, tag__icontains=notes_with_tags)
             context.update({"tags": tags})
             contacts_with_id = []
             for item in tags:
-                if item.note_id_id not in contacts_with_id:
-                    contacts_with_id.append(item.note_id_id)
+                if item.note_id not in contacts_with_id:
+                    contacts_with_id.append(item.note_id)
             valid_notes = []
             for item in contacts_with_id:
                 valid_notes.append(Note.objects.get(pk=item))
@@ -39,12 +41,15 @@ def notes(request):
 
 @login_required
 def delete_note(request, note_id):
-    Note.objects.filter(id=note_id).delete()
+    if Note.objects.get(id=note_id).user_id == request.user.id:
+        Note.objects.filter(id=note_id).delete()
     return redirect('note_book')
 
 
 @login_required
 def add_tag(request, note_id):
+    if Note.objects.get(id=note_id).user_id != request.user.id:
+        return redirect('note_book')
     context = {
         'form': AddTag(),
         'id_note': note_id,
@@ -53,7 +58,7 @@ def add_tag(request, note_id):
         context['form'] = AddTag(request.POST)
         if context['form'].is_valid():
             new_tag_value = context['form'].cleaned_data['tag']
-            new_tag = NoteTag(tag=new_tag_value, note_id=Note.objects.filter(id=note_id)[0])
+            new_tag = NoteTag(tag=new_tag_value, note_id=Note.objects.filter(id=note_id)[0].id)
             new_tag.save()
             return redirect('detail_note', note_id=note_id)
     return render(request, 'pages/add_tag.html', context)
@@ -61,6 +66,7 @@ def add_tag(request, note_id):
 
 @login_required
 def add_note(request):
+    logged_user_id = request.user.id
     context = {
         'form': AddNote(),
     }
@@ -70,11 +76,11 @@ def add_note(request):
             note = context['form'].cleaned_data['note']
             tags = context['form'].cleaned_data['tag']
             description = context['form'].cleaned_data['description']
-            note_to_db = Note(name=note, description=description)
+            note_to_db = Note(user_id=logged_user_id, name=note, description=description)
             note_to_db.save()
             list_of_tags = tags.split(',')
             for tag in list_of_tags:
-                tag_to_db = NoteTag(tag=tag.strip(), note_id=note_to_db)
+                tag_to_db = NoteTag(tag=tag.strip(), note_id=note_to_db.id)
                 tag_to_db.save()
             return redirect('note_book')
     return render(request, 'pages/add_note.html', context)
@@ -82,7 +88,9 @@ def add_note(request):
 
 @login_required
 def detail_note(request, note_id):
-    note_tags = NoteTag.objects.filter(note_id_id=note_id)
+    if Note.objects.get(id=note_id).user_id != request.user.id:
+        return redirect('note_book')
+    note_tags = NoteTag.objects.filter(note_id=note_id)
     note = Note.objects.get(pk=note_id)
     context = {
         'note': note,
@@ -93,6 +101,8 @@ def detail_note(request, note_id):
 
 @login_required
 def change_note_name(request, note_id):
+    if Note.objects.get(id=note_id).user_id != request.user.id:
+        return redirect('note_book')
     context = {
         'form': ChangeNoteName(),
         'note_id': note_id
@@ -110,6 +120,8 @@ def change_note_name(request, note_id):
 
 @login_required
 def change_note_description(request, note_id):
+    if Note.objects.get(id=note_id).user_id != request.user.id:
+        return redirect('note_book')
     context = {
         'form': ChangeNoteDescription(),
         'note_id': note_id
@@ -127,6 +139,8 @@ def change_note_description(request, note_id):
 
 @login_required
 def change_note_status(request, note_id):
+    if Note.objects.get(id=note_id).user_id != request.user.id:
+        return redirect('note_book')
     note = Note.objects.get(pk=note_id)
     note.done = False if note.done else True
     note.save()
@@ -135,5 +149,7 @@ def change_note_status(request, note_id):
 
 @login_required
 def delete_note_tags(request, note_id, tag_id):
+    if Note.objects.get(id=note_id).user_id != request.user.id:
+        return redirect('note_book')
     NoteTag.objects.filter(id=tag_id, note_id=note_id).delete()
     return redirect('detail_note', note_id=note_id)

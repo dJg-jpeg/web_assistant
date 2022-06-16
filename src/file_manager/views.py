@@ -16,11 +16,23 @@ def index(request):
 
 @login_required
 def file_manager(request):
-    files = FileManager.objects.all()
+    if len(FileType.objects.all()) == 0:
+        FileType.create("Video").save()
+        FileType.create("Audio").save()
+        FileType.create("Images").save()
+        FileType.create("Archives").save()
+        FileType.create("Documents").save()
+        FileType.create("Other").save()
+    logged_user_id = request.user.id
+    files = FileManager.objects.filter(user_id=logged_user_id)
     categories = FileType.objects.all()
+    list_of_names = []
+    for item in files:
+        list_of_names.append(str(item.file_name).split("/")[1])
     context = {
         'files': files,
         'categories': categories,
+        'file_name': list_of_names,
     }
 
     return render(request, template_name='pages/file_manager.html', context=context)
@@ -39,6 +51,7 @@ def download(request, path):
 
 @login_required
 def upload(request):
+    logged_user_id = request.user.id
     context = {
         'form': UploadFile(),
     }
@@ -55,11 +68,19 @@ def upload(request):
         for category, extensions in files_types.items():
             if file_type in extensions:
                 file_category_id = FileType.objects.get(file_type=category).id
-                document = FileManager.objects.create(file_name=file, category_id_id=file_category_id)
+                document = FileManager.objects.create(
+                    user_id=logged_user_id,
+                    file_name=file,
+                    file_type_id=file_category_id,
+                )
                 document.save()
                 return redirect('file_manager')
         other_ctg_id = FileType.objects.get(file_type='Other').id
-        document = FileManager.objects.create(file_name=file, category_id_id=other_ctg_id)
+        document = FileManager.objects.create(
+            user_id=logged_user_id,
+            file_name=file,
+            file_type_id=other_ctg_id
+        )
         document.save()
         return redirect('file_manager')
     return render(request, 'pages/upload.html', context)
@@ -67,13 +88,15 @@ def upload(request):
 
 @login_required
 def delete_file(request, file_id):
-    FileManager.objects.get(pk=file_id).delete()
+    if FileManager.objects.get(id=file_id).user_id == request.user.id:
+        FileManager.objects.get(pk=file_id).delete()
     return redirect('file_manager')
 
 
 @login_required
 def show_by_category(request, category_id):
-    files = FileManager.objects.filter(category_id_id=category_id)
+    logged_user_id = request.user.id
+    files = FileManager.objects.filter(user_id=logged_user_id, file_type_id=category_id)
     categories = FileType.objects.all()
     context = {
         'files': files,

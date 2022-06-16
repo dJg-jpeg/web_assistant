@@ -31,7 +31,7 @@ Contact book::{{ block.super }}
             <div class="note_item">
                 <h5 style="width: 1%">{{ forloop.counter }}.</h5>
                 <h5 style="width: 10%"><a class="detail_note_info" href="{% url 'detail_note' note.id%}">{{ note.name }}</a></h5>
-                <h5 style="width: 55%">tags:<br> {% for tag in tags %} {% if tag.note_id_id == note.id %}
+                <h5 style="width: 55%">tags:<br> {% for tag in tags %} {% if tag.note_id == note.id %}
                     #{{ tag.tag }};{% endif %} {% endfor %}</h5>
                 <a class="show_detail_info_note" href="{% url 'detail_note' note.id%}">More info</a>
             </div>

@@ -130,3 +130,7 @@ dmypy.json
 
 src/WebAssistant/
 .idea/
+src/media_cdn
+src/contact_book/migrations
+src/file_manager/migrations
+src/note_book/migrations
